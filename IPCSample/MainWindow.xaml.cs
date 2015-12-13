@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+using System.Threading;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
 using System.Text;
@@ -8,6 +10,15 @@ using Data;
 
 namespace IPCClient
 {
+    [Serializable]
+    public class ViewModel
+    {
+        public string Message { get; set; }
+
+        public void OnChanged(IPCEventArg e)
+        {
+        }
+    }
     /// <summary>
     /// MainWindow.xaml の相互作用ロジック
     /// </summary>
@@ -21,6 +32,9 @@ namespace IPCClient
         public MainWindow()
         {
             InitializeComponent();
+
+            ViewModel vm = new ViewModel();
+            this.DataContext = vm;
             Top  = 50;
             Left = 50;
 
@@ -32,10 +46,19 @@ namespace IPCClient
 
             _data = (IPCData)Activator.GetObject(typeof(IPCData), "ipc://IPCSamplePort/IPCSampleURI");
 
-            //_data.OnChanged += new IPCData.CallEventHandler((v) =>{});
+            //_data.OnChanged += vm.OnChanged;
 
-            
-
+            new TaskFactory().StartNew(() =>{
+                while(true)
+                {
+                    Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        Message.Text = _data.Name;
+                        TextValue.Text = _data.Name;
+                    }));
+                    Thread.Sleep(100);                    
+                }
+            });
         }
 
 

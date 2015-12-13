@@ -39,6 +39,9 @@ namespace IPCServer
                 Name = "hoge"
             };
             RemotingServices.Marshal(_data, "IPCSampleURI", typeof(IPCData));
+            //RemotingConfiguration.RegisterWellKnownServiceType(
+            //    typeof(IPCData), "IPCSampleURI", 
+            //    System.Runtime.Remoting.WellKnownObjectMode.Singleton);
 
             _data.OnChanged += (d) => {
                 Dispatcher.BeginInvoke(new Action(() =>

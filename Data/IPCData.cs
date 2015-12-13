@@ -3,10 +3,11 @@ using System.Collections.Generic;
 
 namespace Data
 {
+    /// <summary> </summary>
+    public delegate void CallEventHandler(IPCEventArg e);
+
     public class IPCData : MarshalByRefObject
     {
-        /// <summary> </summary>
-        public delegate void CallEventHandler(IPCEventArg e);
         /// <summary> </summary>
         public event CallEventHandler OnChanged;
         /// <summary> </summary>
