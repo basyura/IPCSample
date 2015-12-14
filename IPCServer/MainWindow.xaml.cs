@@ -42,6 +42,15 @@ namespace IPCServer
             //RemotingConfiguration.RegisterWellKnownServiceType(
             //    typeof(IPCData), "IPCSampleURI", 
             //    System.Runtime.Remoting.WellKnownObjectMode.Singleton);
+            _data.ToolAdded += (d, tool) => {
+                IpcClientChannel cl = new IpcClientChannel("IPCSampleChannel_" + tool, null);
+                ChannelServices.RegisterChannel(cl, true);
+                IPCData cldata = (IPCData)Activator.GetObject(typeof(IPCData), "ipc://IPCSamplePort2/IPCSampleURI_" + tool);
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    TextValue.Text = "!!!!!!!!!!!!!!!";
+                }));
+            };
 
             _data.OnChanged += (d) => {
                 Dispatcher.BeginInvoke(new Action(() =>

@@ -1,4 +1,10 @@
 ﻿using System;
+using System;
+using System.Windows.Controls;
+using System.Collections.Generic;
+using System.Runtime.Remoting;
+using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Channels.Ipc;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Runtime.Remoting.Channels;
@@ -45,8 +51,19 @@ namespace IPCClient
             Message.Text = buf.ToString();
 
             _data = (IPCData)Activator.GetObject(typeof(IPCData), "ipc://IPCSamplePort/IPCSampleURI");
+            string name = _data.Name;
 
             //_data.OnChanged += vm.OnChanged;
+
+            IpcServerChannel sv = new IpcServerChannel("IPCSampleChannel_hoge", "IPCSamplePort2");
+            ChannelServices.RegisterChannel(sv, true);
+
+            IPCData cldata = new IPCData()
+            {
+                Name = "hoge"
+            };
+            RemotingServices.Marshal(cldata, "IPCSampleURI_hoge", typeof(IPCData));
+            _data.AddTool("hoge");
 
             new TaskFactory().StartNew(() =>{
                 while(true)
